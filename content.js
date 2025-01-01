@@ -7,6 +7,16 @@ const removeAds = () => {
   };
 
   
+
+  // Hide sidebar and banner ads
+const hideAds = () => {
+  const adElements = document.querySelectorAll(
+    'ytd-promoted-sparkles-web-renderer, ytd-display-ad-renderer, .ytd-player-legacy-desktop-watch-ads-renderer'
+  );
+  adElements.forEach((ad) => ad.style.display = 'none');
+};
+
+
   // Observe the page for changes and apply ad-blocking
   const observer = new MutationObserver(() => {
     removeAds();

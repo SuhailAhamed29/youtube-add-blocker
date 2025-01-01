@@ -1,25 +1,24 @@
 {
-    "manifest_version": 3,
-    "name": "YouTube Ad Blocker",
-    "version": "1.0",
-    "description": "Blocks ads on YouTube.",
-    "permissions": ["scripting"],
-    "host_permissions": [
-      "https://www.youtube.com/*"
-    ],
-    
-    "action": {
-      "default_icon": {
-        "16": "icon.png",
-        "48": "icon.png",
-        "128": "icon.png"
-      }
-    },
-    "content_scripts": [
-      {
-        "matches": ["*://*.youtube.com/*"],
-        "js": ["content.js"]
-      }
-    ]
-  }
-  
+  "manifest_version": 3,
+  "name": "YouTube Ad Blocker",
+  "version": "1.0",
+  "description": "Blocks ads on YouTube.",
+  "permissions": ["scripting"],
+  "host_permissions": [
+    "https://www.youtube.com/*"
+  ],
+
+  "action": {
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
