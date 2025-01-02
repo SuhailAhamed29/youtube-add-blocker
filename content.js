@@ -4,7 +4,7 @@ console.log("YouTube Ad Blocker: Content script loaded");
 // Function to remove in-video ads
 const removeAds = () => {
   const adContainers = document.querySelectorAll(
-    '.video-ads, .ytp-ad-module, .ytp-ad-overlay-container'
+    '.video-ads, .ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-player-overlay'
   );
   console.log('Ad containers found:', adContainers); // Debugging
   adContainers.forEach((ad) => {
@@ -25,11 +25,22 @@ const hideAds = () => {
   });
 };
 
+// Function to detect and block mid-roll ads by observing the ad's elements during playback
+const observeForMidRollAds = () => {
+  const adOverlay = document.querySelector('.ytp-ad-overlay-container');
+  
+  if (adOverlay) {
+    console.log('Mid-roll ad detected');
+    removeAds();
+  }
+};
+
 // Function to observe changes in the page and apply ad-blocking
 const observer = new MutationObserver(() => {
   console.log('Mutation detected, removing ads...');
   removeAds();
   hideAds();
+  observeForMidRollAds(); // Check for mid-roll ads during page updates
 });
 
 // Start observing the YouTube DOM for changes
@@ -44,3 +55,9 @@ setTimeout(() => {
   removeAds();
   hideAds();
 }, 3000); // Delay added to account for dynamic loading of content
+
+// Periodically check for mid-roll ads
+setInterval(() => {
+  console.log('Periodic check for mid-roll ads...');
+  observeForMidRollAds();
+}, 1000); // Check every second for mid-roll ads
