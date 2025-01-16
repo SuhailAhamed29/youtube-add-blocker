@@ -1,63 +1,49 @@
-// Log when the content script is loaded
-console.log("YouTube Ad Blocker: Content script loaded");
+console.log("YouTube Ad Blocker: Script loaded");
 
-// Function to remove in-video ads
+// Function to remove ads on YouTube
 const removeAds = () => {
-  const adContainers = document.querySelectorAll(
-    '.video-ads, .ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-player-overlay'
-  );
-  console.log('Ad containers found:', adContainers); // Debugging
-  adContainers.forEach((ad) => {
-    ad.remove();
-    console.log('Removed ad container:', ad); // Debugging
-  });
-};
+  try {
+    // Remove video ads
+    const videoAds = document.querySelectorAll('.video-ads, .ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-player-overlay');
+    videoAds.forEach((ad) => {
+      console.log("Removing video ad:", ad);
+      ad.remove();
+    });
 
-// Function to hide sidebar and banner ads
-const hideAds = () => {
-  const adElements = document.querySelectorAll(
-    'ytd-promoted-sparkles-web-renderer, ytd-display-ad-renderer, .ytd-player-legacy-desktop-watch-ads-renderer'
-  );
-  console.log('Sidebar/banner ads found:', adElements); // Debugging
-  adElements.forEach((ad) => {
-    ad.style.display = 'none';
-    console.log('Hid ad element:', ad); // Debugging
-  });
-};
+    // Hide promoted videos and banners
+    const promotedContent = document.querySelectorAll('ytd-promoted-sparkles-web-renderer, ytd-display-ad-renderer');
+    promotedContent.forEach((ad) => {
+      console.log("Hiding promoted content:", ad);
+      ad.style.display = "none";
+    });
 
-// Function to detect and block mid-roll ads by observing the ad's elements during playback
-const observeForMidRollAds = () => {
-  const adOverlay = document.querySelector('.ytp-ad-overlay-container');
-  
-  if (adOverlay) {
-    console.log('Mid-roll ad detected');
-    removeAds();
+    // Remove ad-related iframes
+    const adIframes = document.querySelectorAll('iframe');
+    adIframes.forEach((iframe) => {
+      if (iframe.src.includes('googleads') || iframe.src.includes('doubleclick.net')) {
+        console.log("Removing ad iframe:", iframe);
+        iframe.remove();
+      }
+    });
+  } catch (error) {
+    console.error("Error while removing ads:", error);
   }
 };
 
-// Function to observe changes in the page and apply ad-blocking
+// Observe changes in the DOM for dynamically loaded ads
 const observer = new MutationObserver(() => {
-  console.log('Mutation detected, removing ads...');
+  console.log("DOM mutation detected, checking for ads...");
   removeAds();
-  hideAds();
-  observeForMidRollAds(); // Check for mid-roll ads during page updates
 });
 
-// Start observing the YouTube DOM for changes
+// Start observing changes on the page
 observer.observe(document.body, {
   childList: true,
   subtree: true
 });
 
-// Additional fallback to remove ads after a short delay
-setTimeout(() => {
-  console.log("Fallback ad removal triggered...");
-  removeAds();
-  hideAds();
-}, 3000); // Delay added to account for dynamic loading of content
-
-// Periodically check for mid-roll ads
+// Periodic fallback for missed ads
 setInterval(() => {
-  console.log('Periodic check for mid-roll ads...');
-  observeForMidRollAds();
-}, 1000); // Check every second for mid-roll ads
+  console.log("Periodic ad check triggered...");
+  removeAds();
+}, 3000); // Every 3 seconds
